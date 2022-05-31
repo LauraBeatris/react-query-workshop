@@ -28,6 +28,18 @@ npm install
 yarn install
 ```
 
+### Create GitHub personal token & set to env variable
+
+- Follow the instructions from the [GitHub docs page](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-token) in order to create a personal token with permissions for repository operations
+- Copy the `.env.example` file and add your personal token value
+```bash
+  cp .env.example .env
+```
+
+```.env
+VITE_GITHUB_PERSONAL_TOKEN=value-here
+```
+
 ### Start development server
 
 ```bash
