@@ -1,17 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useFetch } from './hooks/useFetch'
 
 function App () {
-  const [repositories, setRepositories] = useState([])
-
-  useEffect(() => {
-    fetch('https://api.github.com/users/LauraBeatris/repos')
-      .then((response) => response.json())
-      .then((data) => setRepositories(data))
-  }, [])
+  const { data, isFetching, error } = useFetch('https://api.github.com/users/laurabeatris/repos')
 
   return (
     <ul className='App'>
-      {repositories?.map((item) => (
+      {error && <p>Something went wrong, try to refresh the page</p>}
+
+      {isFetching && <p>Loading</p>}
+
+      {data?.map((item) => (
         <li key={item.id}>
           <strong>{item.full_name}</strong>
           <br />
