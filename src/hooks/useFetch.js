@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { githubAPI } from '../config'
 
 /**
  * Fetches data from a given URL and handles error and loading state
@@ -10,10 +11,9 @@ export function useFetch (url) {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        setData(data)
+    githubAPI.get(url)
+      .then((res) => {
+        setData(res.data)
       })
       .catch((err) => {
         setError(err)
