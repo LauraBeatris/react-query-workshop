@@ -1,28 +1,14 @@
-import { useQuery } from 'react-query'
-import { githubAPI } from './config'
+import { Route, Routes } from 'react-router-dom'
 
-function getRepositories () {
-  return githubAPI.get('https://api.github.com/users/laurabeatris/repos')
-    .then(res => res.data)
-}
+import { RepoDetails } from './pages/RepoDetails'
+import { ReposList } from './pages/ReposList'
 
 function App () {
-  const { data, error, isFetching } = useQuery('repos', getRepositories)
-
   return (
-    <ul className='App'>
-      {error && <p>Something went wrong, try to refresh the page</p>}
-
-      {isFetching && <p>Loading</p>}
-
-      {data?.map((item) => (
-        <li key={item.id}>
-          <strong>{item.full_name}</strong>
-          <br />
-          <small>{item.description}</small>
-        </li>
-      ))}
-    </ul>
+    <Routes>
+      <Route path='/' element={<ReposList />} />
+      <Route path='/repo/:id' element={<RepoDetails />} />
+    </Routes>
   )
 }
 
