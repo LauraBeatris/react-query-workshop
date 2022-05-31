@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery, useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Link, useParams } from 'react-router-dom'
 import { githubAPI } from '../config'
 
@@ -14,7 +14,8 @@ export function useRepositoryQuery () {
   const repositoriesListCache = queryClient.getQueryData('repos')
   const currentRepositoryCache = repositoriesListCache?.find((repo) => repo.full_name === fullName)
   const { data, isFetching } = useQuery(`repo-${fullName}`, () => getRepositoryByName(fullName), {
-    enabled: !currentRepositoryCache
+    enabled: !currentRepositoryCache,
+    initialData: currentRepositoryCache
   })
 
   const updateCacheWithDescription = (description) => {
@@ -31,9 +32,22 @@ export function useRepositoryQuery () {
   return { data, isFetching, updateCacheWithDescription }
 }
 
+function updateRepository (repoName, data) {
+  return githubAPI.patch(`/repos/${repoName}`, {
+    data
+  })
+}
+
+export function useUpdateRepositoryMutation () {
+  const mutation = useMutation((repoName, data) => updateRepository(repoName, data))
+
+  return mutation
+}
+
 export function RepoDetails () {
   const { data, isFetching, updateCacheWithDescription } = useRepositoryQuery()
   const [description, setDescription] = useState('')
+  const updateRepository = useUpdateRepositoryMutation()
 
   const handleInputChange = (event) => {
     setDescription(event.target.value)
@@ -44,6 +58,7 @@ export function RepoDetails () {
     setDescription('')
 
     updateCacheWithDescription(description)
+    updateRepository.mutate(data.full_name, { description })
   }
 
   return (
