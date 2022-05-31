@@ -7,7 +7,7 @@ function App () {
   return (
     <Routes>
       <Route path='/' element={<ReposList />} />
-      <Route path='/repo/:id' element={<RepoDetails />} />
+      <Route path='/repo/*' element={<RepoDetails />} />
     </Routes>
   )
 }
