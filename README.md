@@ -49,3 +49,12 @@ npm dev
 # With yarn
 yarn dev
 ```
+
+### Workshop parts per branch
+
+- [Configuring Axios](https://github.com/LauraBeatris/react-query-workshop/tree/configure-axios)
+- [Extracting API call to hook](https://github.com/LauraBeatris/react-query-workshop/tree/extracting-api-call-to-hook)
+- [Configuring react-query](https://github.com/LauraBeatris/react-query-workshop/tree/configuring-react-query)
+- [Introduce stale time configuration](https://github.com/LauraBeatris/react-query-workshop/tree/introduce-state-time)
+- [Introduce cache invalidation](https://github.com/LauraBeatris/react-query-workshop/tree/introduce-cache-invalidation)
+- [Introduce mutation](https://github.com/LauraBeatris/react-query-workshop/tree/introduce-repo-mutation)
