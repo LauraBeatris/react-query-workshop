@@ -1,7 +1,13 @@
-import { useFetch } from './hooks/useFetch'
+import { useQuery } from 'react-query'
+import { githubAPI } from './config'
+
+function getRepositories () {
+  return githubAPI.get('https://api.github.com/users/laurabeatris/repos')
+    .then(res => res.data)
+}
 
 function App () {
-  const { data, isFetching, error } = useFetch('https://api.github.com/users/laurabeatris/repos')
+  const { data, error, isFetching } = useQuery('repos', getRepositories)
 
   return (
     <ul className='App'>
