@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { githubAPI } from '../config'
 
 function getRepositories () {
-  return githubAPI.get('https://api.github.com/users/laurabeatris/repos')
+  return githubAPI.get('/users/laurabeatris/repos')
     .then(res => res.data)
 }
 
@@ -21,7 +21,7 @@ export function ReposList () {
 
       {data?.map((item) => (
         <li key={item.id}>
-          <Link to={`/repo/${item.id}`}>
+          <Link to={`/repo/${item.full_name}`}>
             <strong>{item.full_name}</strong>
           </Link>
           <br />
