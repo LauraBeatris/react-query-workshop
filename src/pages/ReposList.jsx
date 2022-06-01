@@ -9,9 +9,7 @@ function getRepositories () {
 }
 
 export function ReposList () {
-  const { data, error, isFetching } = useQuery('repos', getRepositories, {
-    staleTime: 1000 * 60 // 1 minute
-  })
+  const { data, error, isFetching } = useQuery('repos', getRepositories)
 
   return (
     <ul className='App'>

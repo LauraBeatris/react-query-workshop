@@ -13,39 +13,50 @@ export function useRepositoryQuery () {
 
   const repositoriesListCache = queryClient.getQueryData('repos')
   const currentRepositoryCache = repositoriesListCache?.find((repo) => repo.full_name === fullName)
-  const { data, isFetching } = useQuery(`repo-${fullName}`, () => getRepositoryByName(fullName), {
+  const { data, isFetching } = useQuery(['repos', fullName], () => getRepositoryByName(fullName), {
     enabled: !currentRepositoryCache,
     initialData: currentRepositoryCache
   })
 
-  const updateCacheWithDescription = (description) => {
-    if (!repositoriesListCache) return
-
-    const updatedCachedList = repositoriesListCache.map((repo) => {
-      const isCurrentRepository = repo.full_name === fullName
-
-      return isCurrentRepository ? { ...repo, description } : repo
-    })
-    queryClient.setQueryData('repos', updatedCachedList)
-  }
-
-  return { data, isFetching, updateCacheWithDescription }
+  return { data, isFetching }
 }
 
-function updateRepository (repoName, data) {
-  return githubAPI.patch(`/repos/${repoName}`, {
-    data
-  })
+function updateRepository ({ repoName, description }) {
+  return githubAPI.patch(`/repos/${repoName}`, { description })
 }
 
 export function useUpdateRepositoryMutation () {
-  const mutation = useMutation((repoName, data) => updateRepository(repoName, data))
+  const queryClient = useQueryClient()
+  const mutation = useMutation(
+    ({ repoName, description }) => updateRepository({ repoName, description }),
+    {
+      onMutate: async ({ repoName, description }) => {
+        await queryClient.cancelQueries('repos')
+
+        const previousRepos = queryClient.getQueryData('repos')
+
+        queryClient.setQueryData('repos', previousRepos.map(
+          (repo) => repo.full_name === repoName
+            ? { ...repo, description }
+            : repo)
+        )
+
+        return { previousRepos }
+      },
+      onError: (_err, _updatedRepo, context) => {
+        queryClient.setQueryData('repos', context.previousRepos)
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries('repos')
+      }
+    }
+  )
 
   return mutation
 }
 
 export function RepoDetails () {
-  const { data, isFetching, updateCacheWithDescription } = useRepositoryQuery()
+  const { data, isFetching } = useRepositoryQuery()
   const [description, setDescription] = useState('')
   const updateRepository = useUpdateRepositoryMutation()
 
@@ -57,8 +68,7 @@ export function RepoDetails () {
     event.preventDefault()
     setDescription('')
 
-    updateCacheWithDescription(description)
-    updateRepository.mutate(data.full_name, { description })
+    updateRepository.mutate({ repoName: data.full_name, description })
   }
 
   return (
